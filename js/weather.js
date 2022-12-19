@@ -1,51 +1,71 @@
 const APIKey = 'MtL3FAIZ3ECnxgKVuWXLHpMG4AEhswKa'
-const getCityUrl = cityName => `http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${APIKey}&q=${cityName}`
+const genericErrorMsg = 'Não foi possível obter os dados'
+const baseUrl = 'http://dataservice.accuweather.com'
 
-const getCityData = async cityName => {
+const getCityUrl = cityName => 
+    `${baseUrl}/locations/v1/cities/search?apikey=${APIKey}&q=${cityName}&language=pt-br`
+
+const getCityWeatherUrl = (Key) => 
+    `${baseUrl}/currentconditions/v1/${Key}?apikey=${APIKey}&language=pt-br`
+
+
+const genericRequest = async url => {
     try {
-        const cityUrl = getCityUrl(cityName)
-        const response = await fetch(cityUrl)
+        const response = await fetch(url)
 
         if(!response.ok){
-            throw new Error('Não foi possível obter os dados')
+            throw new Error(genericErrorMsg)
         }
         
-        // desestruturando e pegando só o primeiro item do array
-        const [cityData] = await response.json()
-        return cityData
+        //retorna uma promise
+        return response.json()
         
     } catch ({name, message}) {
         alert(`Erro: ${name} - ${message}`)        
     }
 }
+                                //retorna uma promise
+const getCityData = cityName => genericRequest(getCityUrl(cityName))
+const getCityWeather = async cityKey => await genericRequest(getCityWeatherUrl(cityKey))
 
-const getCityWeather = async cityName => {
+// const getCityWeather = async cityName => {
+//     const [cityData] = await getCityData(cityName)
+//     return await genericRequest(getCityWeatherUrl(cityData))
+// }
+
+
+// const getCityData = async cityName => {
+//     try {
+//         const cityUrl = getCityUrl(cityName)
+//         // desestruturando e pegando só o primeiro item do array
+//         const [cityData] = await genericRequest(cityUrl)
+
+//         return cityData
+        
+//     } catch ({name, message}) {
+//         alert(`Erro: ${name} - ${message}`)        
+//     }
+// }
+
+// const getCityWeather = async cityName => {
     
-    try {
-        const { Key } = await getCityData(cityName)
-        const cityWeatherUrl = `http://dataservice.accuweather.com/currentconditions/v1/${Key}?apikey=${APIKey}`
-        const response = await fetch(cityWeatherUrl)
-        
-        if(!response.ok){
-            throw new Error('Não foi possível obter os dados')
-        }
+//     try {
+//         const { Key } = await getCityData(cityName)
 
-        const [cityWeatherData] = await response.json()
-        return cityWeatherData
+//         if(Key){
+//             const cityWeatherUrl = getCityWeatherUrl(Key)
+            
+//             // desestruturando e pegando só o primeiro item do array
+//             const [cityWeatherData] = await genericRequest(cityWeatherUrl)
+            
+//             return cityWeatherData
+//         } else {
+//             console.log('aqui')            
+//             alert(`City Weather: ${genericErrorMsg}`)
+//         }
 
-    } catch (error) {
-        
-    }
-}
-
-const form = document.querySelector('form')
-const cityInput = form.city
-
-cityInput.addEventListener('change', event => {
-    const cityName = event.target.value || ''
-
-    if(cityName){
-        getCityWeather(cityName)
-    }
-}) 
+//     } catch ({name, message}) {
+//         alert(`Erro: ${name} - ${message}`)
+//     }
+// } 
 
