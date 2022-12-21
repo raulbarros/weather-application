@@ -39,6 +39,8 @@ const getDataInformation = async cityName => {
         , WeatherIcon)
 
     form.reset()
+
+    localStorage.setItem('city', cityName)
 }
 
 const showCityCard = () => {
@@ -72,3 +74,15 @@ const showCityWeatherInfo = (
     // divWeather.innerHTML = WeatherText
     // divTemperature.innerHTML = Temperature.Metric.Value//Value
 }
+
+
+const showLocalStorageCity = () => {
+    const city = localStorage.getItem('city')
+    
+    if(city){
+        getDataInformation(city)
+    }
+
+}
+
+showLocalStorageCity()
