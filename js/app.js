@@ -9,7 +9,7 @@ const timeIconContainer = document.querySelector('[data-js="time-icon"]') // dia
 // console.log(cityCard.classList.contains('d-none'))
 // console.log(Array.from(cityCard.classList).includes('d-none'))
 
-form.addEventListener('submit', event => {
+const handleCityForm = event => {
     event.preventDefault()
     const cityName = event.target.city.value || ''
 
@@ -18,9 +18,13 @@ form.addEventListener('submit', event => {
         getDataInformation(cityName)
 
     }
-})
+}
 
-const getDataInformation = async cityName => {
+form.addEventListener('submit', handleCityForm)
+
+// factory function
+// every retuns an object
+const fetchCityWeatherInfo = async cityName => {
     const [{ Key, LocalizedName }] = await getCityData(cityName)
     const [
         {
@@ -30,6 +34,25 @@ const getDataInformation = async cityName => {
             WeatherIcon
         }
     ] = await getCityWeather(Key)
+
+    return {
+        LocalizedName,
+        WeatherText,
+        Temperature,
+        isDayTime,
+        WeatherIcon
+    }
+}
+
+const getDataInformation = async cityName => {
+    
+    const {
+        LocalizedName, 
+        WeatherText, 
+        Temperature, 
+        isDayTime, 
+        WeatherIcon
+    } = await fetchCityWeatherInfo(cityName)
 
     showCityWeatherInfo(
         LocalizedName
